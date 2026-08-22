@@ -1,5 +1,4 @@
-pkill -f python
-cat <<'EOF' > bot_frozen01.py
+from keep_alive import keep_alive
 import telebot
 from telebot import types
 import threading
@@ -142,4 +141,4 @@ def welcome_new(message):
 print("Frozen 01 Bot is running successfully with organized code structure...")
 bot.polling(none_stop=True, interval=0)
 EOF
-python bot_frozen01.py
+keep_alive()
