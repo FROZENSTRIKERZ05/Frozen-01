@@ -139,6 +139,5 @@ def welcome_new(message):
         threading.Thread(target=delayed_delete, args=(message.chat.id, [sent_msg.message_id])).start()
 
 print("Frozen 01 Bot is running successfully with organized code structure...")
-bot.polling(none_stop=True, interval=0)
-EOF
 keep_alive()
+bot.polling(none_stop=True, interval=0)
