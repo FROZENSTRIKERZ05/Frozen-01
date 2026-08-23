@@ -136,9 +136,9 @@ def callback(call):
         if call.message.chat.type != 'private':
             threading.Thread(target=delayed_delete, args=(call.message.chat.id, [sent_msg.message_id])).start()
 
-# Absolute reliable welcome handler for groups
+# 1. Welcome Message for GROUPS
 @bot.message_handler(content_types=['new_chat_members'])
-def welcome_new(message):
+def welcome_group(message):
     for member in message.new_chat_members:
         if member.is_self:
             continue
@@ -154,12 +154,30 @@ def welcome_new(message):
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
         try:
-            sent_msg = bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
-            # Optional: Delete join notification message from telegram to keep group clean, and keep welcome message
-            bot.delete_message(message.chat.id, message.message_id)
-        except Exception as e:
-            print(f"Error sending welcome message: {e}")
+            bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
+        except Exception:
+            pass
 
-print("Frozen 01 Bot is running successfully with reliable welcome triggers! 🚀")
+# 2. Welcome Message for CHANNELS (When users join via invite/request)
+@bot.chat_join_request_handler()
+def welcome_channel(request):
+    user = request.from_user
+    user_name = user.first_name
+    user_id = user.id
+    welcome_text = (
+        f"✨ <b>WELCOME TO GHOST IN THE WASTELAND CHANNEL!</b> ✨\n\n"
+        f"👋 Hi {user_name}, Welcome aboard to our exclusive VIP channel!\n\n"
+        f"👤 <b>Name:</b> {user_name}\n"
+        f"🆔 <b>ID:</b> <code>{user_id}</code>\n\n"
+        f"🤖 I am Frozen 01, your dedicated assistant. I am here to guide you through using the Westland game mods smoothly. Feel free to explore our VIP features! 🚀"
+    )
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+    try:
+        bot.send_message(user.id, welcome_text, parse_mode="HTML", reply_markup=markup)
+    except Exception:
+        pass
+
+print("Frozen 01 Bot is running successfully for both Groups & Channels! 🚀")
 keep_alive()
 bot.polling(none_stop=True, interval=0)
