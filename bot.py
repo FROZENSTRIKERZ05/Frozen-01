@@ -91,23 +91,25 @@ def start(m):
     user = m.from_user
     msg_text = (
         f"⚡ <b>WELCOME TO GHOST IN THE WASTELAND, {user.first_name}!</b> ⚡\n\n"
-        f"🤖 <i>I am Frozen 01, your dedicated assistant. I am here to guide you through the world of Westland Survival mods. For any queries regarding our Premium VIP features, game functions, or installation help, feel free to ask me first!</i>\n\n"
+        f"🤖 <i>I am Frozen 01, your dedicated assistant. I am here to guide you through using the LiP Tool for Westland game mods safely.</i>\n\n"
         f"👤 <b>User Profile:</b>\n"
-        f"• Name: <b>{user.first_name}</b>\n"
-        f"• ID: <code>{user.id}</code>\n\n"
-        f"🛡 <b>Need personal assistance from the Owner?</b>\n"
-        f"<i>If you require further help or want to purchase a package, you can reach out to my owner here:</i>\n"
-        f"🔗 <a href='https://t.me/BLACKSUNGOD05'>Message @BLACKSUNGOD05</a>\n\n"
-        f"🚀 <i>Type <b>/menu</b> to explore the VIP packages and all game features.</i>"
+        f"• <b>Name:</b> {user.first_name}\n"
+        f"• <b>ID:</b> <code>{user.id}</code>\n\n"
+        f"⚠️ <b>IMPORTANT NOTICE & RULES:</b>\n"
+        f"Before using any of these functions or tools, you MUST read and follow the group rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
+        f"📌 For any queries regarding Westland game functions, tool usage, or installation help, feel free to ask me first! 🚀"
     )
-    sent_msg = bot.send_message(m.chat.id, msg_text, parse_mode="HTML", disable_web_page_preview=True)
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+    markup.add(types.InlineKeyboardButton("💬 Message Owner", url="https://t.me/BLACKSUNGOD05"))
+    sent_msg = bot.send_message(m.chat.id, msg_text, parse_mode="HTML", reply_markup=markup)
     threading.Thread(target=delayed_delete, args=(m.chat.id, [m.message_id, sent_msg.message_id])).start()
 
 @bot.message_handler(commands=['menu'])
 def menu(m):
     markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("🎮 View VIP Game Functions", callback_data="show_game"))
-    sent_msg = bot.send_message(m.chat.id, MENU, reply_markup=markup, parse_mode="HTML")
+    markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+    sent_msg = bot.send_message(m.chat.id, MENU, parse_mode="HTML", reply_markup=markup)
     threading.Thread(target=delayed_delete, args=(m.chat.id, [m.message_id, sent_msg.message_id])).start()
 
 @bot.message_handler(commands=['help'])
@@ -119,10 +121,10 @@ def help_cmd(m):
 def callback(call):
     if call.data == "show_game":
         markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("ℹ️ Help / Info", callback_data="show_help"))
+        markup.add(types.InlineKeyboardButton("🔙 Help / Info", callback_data="show_help"))
         markup.add(types.InlineKeyboardButton("💬 Message Owner", url="https://t.me/BLACKSUNGOD05"))
         try:
-            bot.edit_message_text(GAME, call.message.chat.id, call.message.message_id, reply_markup=markup, parse_mode="HTML")
+            bot.edit_message_text(GAME, call.message.chat.id, call.message.message_id, parse_mode="HTML", reply_markup=markup)
         except Exception:
             pass
     elif call.data == "show_help":
@@ -133,11 +135,25 @@ def callback(call):
 @bot.message_handler(content_types=['new_chat_members'])
 def welcome_new(message):
     for member in message.new_chat_members:
+        if member.is_self:
+            continue
+        user_name = member.first_name
+        user_id = member.id
+        welcome_text = (
+            f"✨ <b>WELCOME TO GHOST IN THE WASTELAND!</b> ✨\n\n"
+            f"👋 Hi {user_name}, Welcome aboard to our exclusive VIP family!\n\n"
+            f"👤 <b>Name:</b> {user_name}\n"
+            f"🆔 <b>ID:</b> <code>{user_id}</code>\n\n"
+            f"🤖 I am Frozen 01, your dedicated assistant. I am here to guide you through using the LiP Tool for Westland game mods safely.\n\n"
+            f"⚠️ <b>IMPORTANT NOTICE & RULES:</b>\n"
+            f"Before using any of these functions or tools, you MUST read and follow the group/channel rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
+            f"📌 For any queries regarding Westland game functions, tool usage, or installation help, feel free to ask me first! 🚀"
+        )
         markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("🎮 View VIP Game Functions", callback_data="show_game"))
-        sent_msg = bot.send_message(message.chat.id, f"🎉 <b>Welcome {member.first_name} to GHOST IN THE WASTELAND!</b>\n\n{MENU}", reply_markup=markup, parse_mode="HTML")
+        markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+        sent_msg = bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
         threading.Thread(target=delayed_delete, args=(message.chat.id, [sent_msg.message_id])).start()
 
-print("Frozen 01 Bot is running successfully with organized code structure...")
+print("Frozen 01 Bot is running successfully with updated Westland & Rules structure! 🚀")
 keep_alive()
 bot.polling(none_stop=True, interval=0)
