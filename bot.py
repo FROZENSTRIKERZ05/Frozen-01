@@ -136,6 +136,26 @@ def callback(call):
         if call.message.chat.type != 'private':
             threading.Thread(target=delayed_delete, args=(call.message.chat.id, [sent_msg.message_id])).start()
 
-print("Frozen 01 Bot is running successfully with working buttons! 🚀")
+# Group Welcome Message for new members (With Name & ID)
+@bot.message_handler(content_types=['new_chat_members'])
+def welcome_new(message):
+    for member in message.new_chat_members:
+        if member.is_self:
+            continue
+        user_name = member.first_name
+        user_id = member.id
+        welcome_text = (
+            f"✨ <b>WELCOME TO GHOST IN THE WASTELAND!</b> ✨\n\n"
+            f"👋 Hi {user_name}, Welcome aboard to our exclusive VIP family!\n\n"
+            f"👤 <b>Name:</b> {user_name}\n"
+            f"🆔 <b>ID:</b> <code>{user_id}</code>\n\n"
+            f"🤖 I am Frozen 01, your dedicated assistant. I am here to guide you through using the Westland game mods smoothly. Feel free to explore our VIP features! 🚀"
+        )
+        markup = types.InlineKeyboardMarkup()
+        markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+        sent_msg = bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
+        threading.Thread(target=delayed_delete, args=(message.chat.id, [sent_msg.message_id])).start()
+
+print("Frozen 01 Bot is running successfully with all features! 🚀")
 keep_alive()
 bot.polling(none_stop=True, interval=0)
