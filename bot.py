@@ -136,7 +136,6 @@ def callback(call):
         if call.message.chat.type != 'private':
             threading.Thread(target=delayed_delete, args=(call.message.chat.id, [sent_msg.message_id])).start()
 
-# Group Welcome Message for new members (With Name & ID)
 @bot.message_handler(content_types=['new_chat_members'])
 def welcome_new(message):
     for member in message.new_chat_members:
@@ -156,6 +155,6 @@ def welcome_new(message):
         sent_msg = bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
         threading.Thread(target=delayed_delete, args=(message.chat.id, [sent_msg.message_id])).start()
 
-print("Frozen 01 Bot is running successfully with all features! 🚀")
+print("Frozen 01 Bot is running successfully! 🚀")
 keep_alive()
 bot.polling(none_stop=True, interval=0)
