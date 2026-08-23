@@ -62,7 +62,7 @@ GAME = (
     "[🏆] UnlimitedEventReward()  $1🛍\n"
     "[🔄] SilvertonEquipment() .. $1💸\n"
     "[👉] MachinesFreeTime() ..... $1🛍\n"
-    "[🛠] FreeBuilderZone() ..... $1💸\n"
+    "[🛠] FreeBuilderZone() ..... $1🛍\n"
     "[👥] FreeSplit() ........... $1🛍\n"
     "[😴] AutoComplaintQuest() .. $1🛍\n"
     "[🌡] FreeXP() .............. $1🛍\n"
@@ -96,7 +96,7 @@ def start(m):
         f"• <b>Name:</b> {user.first_name}\n"
         f"• <b>ID:</b> <code>{user.id}</code>\n\n"
         f"⚠️ <b>IMPORTANT NOTICE & RULES:</b>\n"
-        f"Before using any of these functions or tools, you MUST read and follow the group rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
+        f"Before using any of these functions or tools, you MUST read and follow the group/channel rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
         f"📌 For any queries regarding Westland game functions, tool usage, or installation help, feel free to ask me first! 🚀"
     )
     markup = types.InlineKeyboardMarkup()
@@ -132,6 +132,7 @@ def callback(call):
         sent_msg = bot.send_message(call.message.chat.id, HELP, parse_mode="HTML", disable_web_page_preview=True)
         threading.Thread(target=delayed_delete, args=(call.message.chat.id, [sent_msg.message_id])).start()
 
+# Handle new members in Groups
 @bot.message_handler(content_types=['new_chat_members'])
 def welcome_new(message):
     for member in message.new_chat_members:
@@ -146,7 +147,7 @@ def welcome_new(message):
             f"🆔 <b>ID:</b> <code>{user_id}</code>\n\n"
             f"🤖 I am Frozen 01, your dedicated assistant. I am here to guide you through using the LiP Tool for Westland game mods safely.\n\n"
             f"⚠️ <b>IMPORTANT NOTICE & RULES:</b>\n"
-            f"Before using any of these functions or tools, you MUST read and follow the group/channel rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
+            f"Before using any of these functions or tools, you MUST read and follow the group rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
             f"📌 For any queries regarding Westland game functions, tool usage, or installation help, feel free to ask me first! 🚀"
         )
         markup = types.InlineKeyboardMarkup()
@@ -154,6 +155,31 @@ def welcome_new(message):
         sent_msg = bot.send_message(message.chat.id, welcome_text, parse_mode="HTML", reply_markup=markup)
         threading.Thread(target=delayed_delete, args=(message.chat.id, [sent_msg.message_id])).start()
 
-print("Frozen 01 Bot is running successfully with updated Westland & Rules structure! 🚀")
+# Handle join requests in Channels (When users join via channel invite link)
+@bot.chat_join_request_handler()
+def welcome_channel_join(request):
+    user = request.from_user
+    user_name = user.first_name
+    user_id = user.id
+    
+    welcome_text = (
+        f"✨ <b>WELCOME TO GHOST IN THE WASTELAND CHANNEL!</b> ✨\n\n"
+        f"👋 Hi {user_name}, Welcome aboard to our exclusive VIP channel!\n\n"
+        f"👤 <b>Name:</b> {user_name}\n"
+        f"🆔 <b>ID:</b> <code>{user_id}</code>\n\n"
+        f"🤖 I am Frozen 01, your dedicated assistant. I am here to guide you through using the LiP Tool for Westland game mods safely.\n\n"
+        f"⚠️ <b>IMPORTANT NOTICE & RULES:</b>\n"
+        f"Before using any of these functions or tools, you MUST read and follow the channel rules carefully. Failing to follow the rules and proper steps may lead to a permanent account ban/suspension!\n\n"
+        f"📌 For any queries regarding Westland game functions, tool usage, or installation help, feel free to ask me first! 🚀"
+    )
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("👑 View VIP Game Functions", callback_data="show_game"))
+    try:
+        # Sends welcome message directly to the user in private chat when they join the channel
+        bot.send_message(user.id, welcome_text, parse_mode="HTML", reply_markup=markup)
+    except Exception:
+        pass
+
+print("Frozen 01 Bot is running successfully with Channel Join Request & Group Support! 🚀")
 keep_alive()
 bot.polling(none_stop=True, interval=0)
